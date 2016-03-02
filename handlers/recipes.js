@@ -19,7 +19,7 @@ exports.find = function (request, reply) {
 };
 
 exports.findOne = function (request, reply) {
-    
+
     this.db.get('SELECT * FROM recipes WHERE id = ?',
         [request.params.id],
         (err, result) => {
@@ -36,3 +36,28 @@ exports.findOne = function (request, reply) {
             }
         });
 }
+
+exports.create = function (request, reply) {
+
+    var sql = 'INSERT INTO recipes (name, cooking_time, prep_time, serves, cuisine, ingredients, directions, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+
+    this.db.run(sql,
+        [
+            request.payload.name,
+            request.payload.cooking_time,
+            request.payload.prep_time,
+            request.payload.serves,
+            request.payload.cuisine,
+            request.payload.ingredients,
+            request.payload.directions,
+            request.auth.credentials.id
+        ],
+        (err) => {
+
+            if (err) {
+                throw err;
+            }
+
+            reply({ status: 'ok' });
+        });
+};
